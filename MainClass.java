@@ -86,20 +86,24 @@ class MainClass{
                 case("1"):
                     addStudent();
                     break;
+                case("2"):
+                    removeStudent();
+                    break;
                 case("3"):
                     addSubject();
+                    break;
+                case("4"):
+                    removeSubject();
+                    break;
+                case("5"):
+                    enrollStudent();
                     break;
                 case("E"):
                     System.out.println("Thank you for using Student Management System!");
                     run = false;
                     break;
             }
-                
-            
         }   
-
-        
-        
     }
 
     public static void addStudent() {
@@ -111,7 +115,25 @@ class MainClass{
             Connection connect = DriverManager.getConnection(connectionName, connectionUser, connectionPassword);
             Statement statement = connect.createStatement();
             int num = statement.executeUpdate("insert into stdtable" + "(name)" +  "values(\"" + tempName + "\")");
-            System.out.println(num + "records inserted!");
+            System.out.println(num + " records inserted!");
+            connect.close();
+        }
+        
+        catch(Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public static void removeStudent() {
+
+        System.out.print("Please enter the student name: ");
+        String tempName = sc.next();
+
+        try {
+            Connection connect = DriverManager.getConnection(connectionName, connectionUser, connectionPassword);
+            Statement statement = connect.createStatement();
+            int num = statement.executeUpdate("delete from stdtable where name = \'" + tempName + "\'");
+            System.out.println(num + " records removed!");
             connect.close();
         }
         
@@ -127,12 +149,58 @@ class MainClass{
         try {
             Connection connect = DriverManager.getConnection(connectionName, connectionUser, connectionPassword);
             Statement statement = connect.createStatement();
-            int num = statement.executeUpdate("insert into subjecttable" + "(subjecttitle)" +  "values(\"" + tempSub + "\")");
-            System.out.println(num + "records inserted!");
+            int num = statement.executeUpdate("insert into subjecttable (subjecttitle)" +  "values(\"" + tempSub + "\")");
+            System.out.println(num + " records inserted!");
             connect.close();
         }
         
         catch(Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public static void removeSubject() {
+        System.out.print("Please enter the subject name: ");
+        String tempSub = sc.next();
+
+        try {
+            Connection connect = DriverManager.getConnection(connectionName, connectionUser, connectionPassword);
+            Statement statement = connect.createStatement();
+            int num = statement.executeUpdate("delete from subjecttable where subjecttitle = \'" + tempSub + "\'");
+            System.out.println(num + " records inserted!");
+            connect.close();
+        }
+        
+        catch(Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public static void enrollStudent() {
+        System.out.print("Please enter student name: ");
+        String tempStudent = sc.next();
+        System.out.print("Please enter subject title: ");
+        String tempSubject = sc.next();
+        int tempStudentId = 0, tempSubjectId = 0;
+        try{
+            Connection connect = DriverManager.getConnection(connectionName, connectionUser, connectionPassword);
+            Statement statement = connect.createStatement();
+            ResultSet result = statement.executeQuery("select stdId from stdtable where name = \'" + tempStudent + "\'");
+            while(result.next()) {
+                tempStudentId = result.getInt("stdId");
+            }
+                
+            result = statement.executeQuery("select subjectId from subjecttable where subjecttitle = \'" + tempSubject + "\'");
+            while(result.next()){
+                tempSubjectId = result.getInt("subjectId");
+            }
+            int num = statement.executeUpdate("insert into stdsubject (stdId, subjectId) values(\'" + tempStudentId + "\', \'" + tempSubjectId + "\')");
+            System.out.println(num + " records inserted!");
+            connect.close();
+
+        }
+
+        catch(Exception e){
             System.out.println(e);
         }
     }
