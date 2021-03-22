@@ -73,14 +73,17 @@ class MainClass{
         System.out.println("Welcome " + name + "!");
         System.out.println("-------Student Management System-------");
         while(run) {
+            System.out.println("-----------------------------------");
             System.out.println("1.\t Add Student into System");
             System.out.println("2.\t Remove Student from System");
             System.out.println("3.\t Add Subject into System");
             System.out.println("4.\t Remove Subject from System");
             System.out.println("5.\t Enroll Student into Subject");
+            System.out.println("V.\t View Student Profile");
             System.out.println("E.\t Exit");
-            System.out.println("Please select a choice:");
+            System.out.print("Please select a choice: ");
             String userchoice = sc.next();
+            System.out.println("-----------------------------------");
             
             switch(userchoice) {
                 case("1"):
@@ -97,6 +100,9 @@ class MainClass{
                     break;
                 case("5"):
                     enrollStudent();
+                    break;
+                case("v"):
+                    viewStudentProfile();
                     break;
                 case("E"):
                     System.out.println("Thank you for using Student Management System!");
@@ -198,6 +204,28 @@ class MainClass{
             System.out.println(num + " records inserted!");
             connect.close();
 
+        }
+
+        catch(Exception e){
+            System.out.println(e);
+        }
+    }
+
+    public static void viewStudentProfile() {
+        System.out.print("Please enter a student name: ");
+        String tempStudent = sc.next();
+        System.out.print(tempStudent + " is currently enrolled in: ");
+        try {
+            Connection connect = DriverManager.getConnection(connectionName, connectionUser, connectionPassword);
+            Statement statement = connect.createStatement();
+            ResultSet result = statement.executeQuery("select subjecttitle " + 
+                            "from stdtable join stdsubject on stdtable.stdId = stdsubject.stdId " +
+                            "join subjecttable on subjecttable.subjectId = stdsubject.subjectId " +
+                            "where stdtable.name = \'" + tempStudent + "\'");
+            while(result.next()) {
+                System.out.print(result.getString("subjecttitle") + ",");
+            }
+            System.out.println();
         }
 
         catch(Exception e){
